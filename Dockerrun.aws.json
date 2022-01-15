@@ -1,9 +1,0 @@
-{
-  "AWSEBDockerrunVersion": "1",
-  "Image": {
-    "Name": "796754402958.dkr.ecr.ap-southeast-1.amazonaws.com/testrepo"
-  },
-  "Ports": [
-    { "ContainerPort": "8096"}
-]
-  }
