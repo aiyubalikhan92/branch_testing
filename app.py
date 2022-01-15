@@ -1,28 +1,34 @@
-from flask import Flask, render_template
-import random
+from flask import Flask
 
-app = Flask(__name__)
+# print a nice greeting.
+def say_hello(username = "World"):
+    return '<p>Hello %s!</p>\n' % username
 
-# list of cat images
-images = [
-    "http://ak-hdl.buzzfed.com/static/2013-10/enhanced/webdr05/15/9/anigif_enhanced-buzz-26388-1381844103-11.gif",
-    "http://ak-hdl.buzzfed.com/static/2013-10/enhanced/webdr01/15/9/anigif_enhanced-buzz-31540-1381844535-8.gif",
-    "http://ak-hdl.buzzfed.com/static/2013-10/enhanced/webdr05/15/9/anigif_enhanced-buzz-26390-1381844163-18.gif",
-    "http://ak-hdl.buzzfed.com/static/2013-10/enhanced/webdr06/15/10/anigif_enhanced-buzz-1376-1381846217-0.gif",
-    "http://ak-hdl.buzzfed.com/static/2013-10/enhanced/webdr03/15/9/anigif_enhanced-buzz-3391-1381844336-26.gif",
-    "http://ak-hdl.buzzfed.com/static/2013-10/enhanced/webdr06/15/10/anigif_enhanced-buzz-29111-1381845968-0.gif",
-    "http://ak-hdl.buzzfed.com/static/2013-10/enhanced/webdr03/15/9/anigif_enhanced-buzz-3409-1381844582-13.gif",
-    "http://ak-hdl.buzzfed.com/static/2013-10/enhanced/webdr02/15/9/anigif_enhanced-buzz-19667-1381844937-10.gif",
-    "http://ak-hdl.buzzfed.com/static/2013-10/enhanced/webdr05/15/9/anigif_enhanced-buzz-26358-1381845043-13.gif",
-    "http://ak-hdl.buzzfed.com/static/2013-10/enhanced/webdr06/15/9/anigif_enhanced-buzz-18774-1381844645-6.gif",
-    "http://ak-hdl.buzzfed.com/static/2013-10/enhanced/webdr06/15/9/anigif_enhanced-buzz-25158-1381844793-0.gif",
-    "http://ak-hdl.buzzfed.com/static/2013-10/enhanced/webdr03/15/10/anigif_enhanced-buzz-11980-1381846269-1.gif"
-]
+# some bits of text for the page.
+header_text = '''
+    <html>\n<head> <title>EB Flask Test</title> </head>\n<body>'''
+instructions = '''
+    <p><em>Hint</em>: This is a RESTful web service! Append a username
+    to the URL (for example: <code>/Thelonious</code>) to say hello to
+    someone specific.</p>\n'''
+home_link = '<p><a href="/">Back</a></p>\n'
+footer_text = '</body>\n</html>'
 
-@app.route('/')
-def index():
-    url = random.choice(images)
-    return render_template('index.html', url=url)
+# EB looks for an 'application' callable by default.
+application = Flask(__name__)
 
+# add a rule for the index page.
+application.add_url_rule('/', 'index', (lambda: header_text +
+    say_hello() + instructions + footer_text))
+
+# add a rule when the page is accessed with a name appended to the site
+# URL.
+application.add_url_rule('/<username>', 'hello', (lambda username:
+    header_text + say_hello(username) + home_link + footer_text))
+
+# run the app.
 if __name__ == "__main__":
-    app.run(host="0.0.0.0")
+    # Setting debug to True enables debug output. This line should be
+    # removed before deploying a production app.
+    application.debug = True
+    application.run()
